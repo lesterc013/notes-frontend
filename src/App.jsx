@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 // import axios from 'axios'
 import Note from "./components/Note"
-import Notification from "./components/Notification";
+import Notification from "./components/Notification"
+import Footer from "./components/Footer"
+import LoginForm from "./components/LoginForm"
+import NoteForm from "./components/NoteForm"
 import noteService from './services/notes'
 import loginService from './services/login'
 import './index.css'
-import Footer from "./components/Footer";
 
 const App = () => {
   const [notes, setNotes] = useState(null) 
@@ -68,7 +70,8 @@ const App = () => {
     }
   }
 
-	// The event is when input element changes i.e. typed a value
+	// Note: Shifted this eventhandler to be inline in the Component
+  // The event is when input element changes i.e. typed a value
 	// The target is the input element
 	// Starting to see the relationship between the on<Specific Action> attribute and the prop being passed to the event handlers -- being passed is the event, which the event handler can then use to manipulate things
   // const handleNoteChange = (event) => {
@@ -98,10 +101,11 @@ const App = () => {
         setErrorMessage(null)}, 5000)
         setNotes(notes.filter(n => n.id !== id))
       })
-    }
+  }
 
+  
   if (!notes) {
-      return null
+    return null
   }
 
   return (
@@ -109,31 +113,25 @@ const App = () => {
       <h1>Notes</h1>
       <Notification message={errorMessage} />
 
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-            <input
-            type='text'
-            name='Username'
-            value={username} 
-            onChange={(event) => {setUsername(event.target.value)}} 
-            />
-        </div>
-
-        <div>
-          password
-            <input
-            type='text'
-            name='Password'
-            value={password}
-            onChange={(event) => setPassword(event.target.value)} 
-            />
-        </div>
-
-        <div>
-          <button type='submit' name='login'>Login</button>
-        </div>
-      </form>
+      {
+        !user ? 
+        <LoginForm 
+          username={username} 
+          password={password} 
+          handleLogin={handleLogin} 
+          setUsername={setUsername} 
+          setPassword={setPassword} 
+        />
+        :
+        <>
+          <p>{user.name} logged in</p>
+          <NoteForm 
+            addNote={addNote} 
+            newNote={newNote} 
+            setNewNote={setNewNote} 
+          /> 
+        </>
+      }
 
       <div>
         <button onClick={() => setShowAll(!showAll)}>
@@ -143,17 +141,9 @@ const App = () => {
 
       <ul>
         {notesToShow.map((note) => (
-            <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
+          <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
         ))}
       </ul>
-
-      <form onSubmit={addNote}>
-        <input 
-          value={newNote} 
-          onChange={(event) => {setNewNote(event.target.value)}} 
-        />
-        <button type="submit">save</button>
-      </form>
 
       <Footer />
 
@@ -161,4 +151,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default App
