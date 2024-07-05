@@ -26,26 +26,23 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    noteService.getAll().then(initialNotes => {
-        setNotes(initialNotes)
-      })
-    }, [])
-    
-	// The event is when form is submitted
-	// The target is the form
-  const addNote = (event) => {
+    const fetchNotes = async () => {
+      const initialNotes = await noteService.getAll()
+      setNotes(initialNotes)
+    }
+    fetchNotes()
+  }, [])
+
+  const addNote = async (event) => {
     event.preventDefault()
 		const noteObject = {
 			// id: notes.length + 1,
 			content: newNote,
 			important: Math.random() < 0.5
-		}
-    noteService
-        .create(noteObject)
-        .then(returnedNote => {
-            setNotes(notes.concat(returnedNote))
-            setNewNote('')
-      })
+    }
+    const returnedNote = await noteService.create(noteObject, user.token)
+    setNotes(notes.concat(returnedNote))
+    setNewNote('')
   }
 
   // Want to post the username and password to the /api/login
@@ -61,7 +58,6 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      console.log(user)
     } catch (error) {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {

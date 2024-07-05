@@ -12,9 +12,14 @@ const getAll = () => {
   return request.then(response => response.data.concat(nonExisting)) // Returns another promise that has the response.data as its value
 }
 
-const create = newObject => {
-  const request = axios.post(baseUrl, newObject)
-  return request.then(response => response.data)
+const create = async (newObject, token) => {
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  }
+  const response = await axios.post(baseUrl, newObject, config)
+  return response.data
 }
 
 const update = (id, newObject) => {
