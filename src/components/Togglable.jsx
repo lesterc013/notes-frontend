@@ -1,26 +1,40 @@
-import { useState } from "react"
+import { useState, forwardRef, useImperativeHandle } from "react"
 /**
  * Will take in a React component like LoginForm as props.children
  * Then before it, it will implement the togglable logic
  */
-const Togglable = (props) => {
+const TogglableComponent = (props, ref) => {
   const [visible, setVisible] = useState(false)
 
   const hideThisWhenVisible = { display: visible ? 'none' : '' }
   const displayThisWhenVisible = { display: visible ? '' : 'none' }
 
+  // Switches visibility value when called
+  const toggleVisible = () => {
+    setVisible(!visible)
+  }
+
+  // useImperativeHandle 'exports' the function to be used in the parent
+  useImperativeHandle(ref, () => {
+    return {
+      toggleVisible
+    }
+  })
+
   return (
     <div>
       <div style={hideThisWhenVisible}>
-        <button onClick={() => setVisible(!visible)}>{props.buttonLabel}</button>
+        <button onClick={toggleVisible}>{props.buttonLabel}</button>
       </div>
 
       <div style={displayThisWhenVisible}>
         {props.children}
-        <button onClick={() => setVisible(!visible)}>cancel</button>
+        <button onClick={toggleVisible}>cancel</button>
       </div>
     </div>
   )
 }
+
+const Togglable = forwardRef(TogglableComponent)
 
 export default Togglable

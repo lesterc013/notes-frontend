@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 // import axios from 'axios'
 import Note from "./components/Note"
 import Notification from "./components/Notification"
@@ -35,8 +35,11 @@ const App = () => {
     fetchNotes()
   }, [])
 
+  const noteFormRef = useRef()
+
   // Create new note
   const createNote = async (noteObject) => {
+    noteFormRef.current.toggleVisible()
     const returnedNote = await noteService.create(noteObject, user.token)
     setNotes(notes.concat(returnedNote))
   }
@@ -126,7 +129,7 @@ const App = () => {
   const noteForm = () => {
     return (
       <div>
-        <Togglable buttonLabel='new note'>
+        <Togglable buttonLabel='new note' ref={noteFormRef}>
           <NoteForm 
             createNote={createNote} 
           />
