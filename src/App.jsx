@@ -5,6 +5,7 @@ import Notification from "./components/Notification"
 import Footer from "./components/Footer"
 import LoginForm from "./components/LoginForm"
 import NoteForm from "./components/NoteForm"
+import Togglable from "./components/Togglable"
 import noteService from './services/notes'
 import loginService from './services/login'
 import './index.css'
@@ -114,26 +115,17 @@ const App = () => {
 
   // Function to render loginForm
   const loginForm = () => {
-    // displayLoginButton if loginFormVisible is FALSE
-    const displayLoginButton = {display: loginFormVisible ? 'none' : ''}
-    const displayLoginForm = {display: loginFormVisible ? '' : 'none'}
-
     return (
       <div>
-        <div style={displayLoginButton}>
-          <button onClick={() => setLoginFormVisible(true)}>login</button>
-        </div>
-
-        <div style={displayLoginForm}>
+        <Togglable buttonLabel='login'>          
           <LoginForm 
-              username={username} 
-              password={password} 
-              handleLogin={handleLogin} 
-              handleUsernameChange={setUsername} 
-              handlePasswordChange={setPassword} 
+            username={username} 
+            password={password} 
+            handleLogin={handleLogin} 
+            handleUsernameChange={setUsername} 
+            handlePasswordChange={setPassword} 
           />
-          <button onClick={() => setLoginFormVisible(false)}>cancel</button>
-        </div>
+        </Togglable>
       </div>
     )
   }
