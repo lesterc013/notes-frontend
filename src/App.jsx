@@ -24,7 +24,9 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [loginFormVisible, setLoginFormVisible] = useState(false)
 
+  // To get notes from database
   useEffect(() => {
     const fetchNotes = async () => {
       const initialNotes = await noteService.getAll()
@@ -45,6 +47,16 @@ const App = () => {
     setNewNote('')
   }
 
+  // To check if user is already logged in
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    if (loggedUserJSON) {
+      // If there is a loggedNoteappUser in stringify, then we parse it back and setUser
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+    }
+  }, [])
+
   // Want to post the username and password to the /api/login
   // Need to use axios to help us -- create a service
   const handleLogin = async event => {
@@ -55,6 +67,7 @@ const App = () => {
       const user = await loginService.login({
         username, password
       })
+      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
       setUser(user)
       setUsername('')
       setPassword('')
@@ -99,6 +112,32 @@ const App = () => {
       })
   }
 
+  // Function to render loginForm
+  const loginForm = () => {
+    // displayLoginButton if loginFormVisible is FALSE
+    const displayLoginButton = {display: loginFormVisible ? 'none' : ''}
+    const displayLoginForm = {display: loginFormVisible ? '' : 'none'}
+
+    return (
+      <div>
+        <div style={displayLoginButton}>
+          <button onClick={() => setLoginFormVisible(true)}>login</button>
+        </div>
+
+        <div style={displayLoginForm}>
+          <LoginForm 
+              username={username} 
+              password={password} 
+              handleLogin={handleLogin} 
+              handleUsernameChange={setUsername} 
+              handlePasswordChange={setPassword} 
+          />
+          <button onClick={() => setLoginFormVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
+  }
+
   
   if (!notes) {
     return null
@@ -111,13 +150,7 @@ const App = () => {
 
       {
         !user ? 
-        <LoginForm 
-          username={username} 
-          password={password} 
-          handleLogin={handleLogin} 
-          setUsername={setUsername} 
-          setPassword={setPassword} 
-        />
+        loginForm()
         :
         <>
           <p>{user.name} logged in</p>
