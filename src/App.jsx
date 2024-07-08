@@ -19,13 +19,12 @@ const App = () => {
         - Workaround is to conditional render the App that if !notes i.e. if notes is null, then we render null FIRST,
         - After get is called and we setNotes --> this will then render App a second time with all the notes
     */
-  const [newNote, setNewNote] = useState("a new note...")
 	const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [loginFormVisible, setLoginFormVisible] = useState(false)
+  // const [loginFormVisible, setLoginFormVisible] = useState(false)
 
   // To get notes from database
   useEffect(() => {
@@ -36,16 +35,10 @@ const App = () => {
     fetchNotes()
   }, [])
 
-  const addNote = async (event) => {
-    event.preventDefault()
-		const noteObject = {
-			// id: notes.length + 1,
-			content: newNote,
-			important: Math.random() < 0.5
-    }
+  // Create new note
+  const createNote = async (noteObject) => {
     const returnedNote = await noteService.create(noteObject, user.token)
     setNotes(notes.concat(returnedNote))
-    setNewNote('')
   }
 
   // To check if user is already logged in
@@ -130,11 +123,23 @@ const App = () => {
     )
   }
 
+  const noteForm = () => {
+    return (
+      <div>
+        <Togglable buttonLabel='new note'>
+          <NoteForm 
+            createNote={createNote} 
+          />
+        </Togglable>
+      </div>
+    )
+  }
+  
   
   if (!notes) {
     return null
   }
-
+  
   return (
     <div>
       <h1>Notes</h1>
@@ -146,11 +151,7 @@ const App = () => {
         :
         <>
           <p>{user.name} logged in</p>
-          <NoteForm 
-            addNote={addNote} 
-            newNote={newNote} 
-            setNewNote={setNewNote} 
-          /> 
+          {noteForm()}
         </>
       }
 
