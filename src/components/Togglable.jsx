@@ -1,4 +1,5 @@
-import { useState, forwardRef, useImperativeHandle } from "react"
+import { useState, forwardRef, useImperativeHandle } from 'react'
+import PropTypes from 'prop-types'
 /**
  * Will take in a React component like LoginForm as props.children
  * Then before it, it will implement the togglable logic
@@ -17,7 +18,7 @@ const TogglableComponent = (props, ref) => {
   // useImperativeHandle 'exports' the function to be used in the parent
   useImperativeHandle(ref, () => {
     return {
-      toggleVisible
+      toggleVisible,
     }
   })
 
@@ -36,5 +37,9 @@ const TogglableComponent = (props, ref) => {
 }
 
 const Togglable = forwardRef(TogglableComponent)
+
+Togglable.propTypes = {
+  buttonLabel: PropTypes.string.isRequired,
+}
 
 export default Togglable
