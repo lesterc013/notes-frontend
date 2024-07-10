@@ -28,7 +28,7 @@ const TogglableComponent = (props, ref) => {
         <button onClick={toggleVisible}>{props.buttonLabel}</button>
       </div>
 
-      <div style={displayThisWhenVisible}>
+      <div style={displayThisWhenVisible} className='togglableContent'>
         {props.children}
         <button onClick={toggleVisible}>cancel</button>
       </div>
