@@ -11,7 +11,7 @@ test('<NoteForm /> updates parent state and calls onSubmit', async () => {
   render(<NoteForm createNote={mockCreateNote} />)
 
   // Get input field using its ARIA role which is textbox
-  const inputField = screen.getByRole('textbox')
+  const inputField = screen.getByPlaceholderText('write note here')
   const saveButton = screen.getByText('save')
 
   await user.type(inputField, 'typing')
